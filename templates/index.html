@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torrent Downloader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-download"></i> Torrent Downloader</h1>
+                <p>Search, download and manage torrents with ease</p>
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search for torrents, movies, music, software...">
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <!-- Manual Magnet/Torrent Input -->
+                <div class="manual-input">
+                    <div class="input-group">
+                        <input type="text" id="magnetInput" placeholder="Paste magnet link or upload torrent file">
+                        <input type="file" id="torrentFile" accept=".torrent" style="display: none;">
+                        <button id="fileBtn" class="file-btn" title="Upload Torrent File">
+                            <i class="fas fa-file-upload"></i>
+                        </button>
+                        <button id="addBtn" class="add-btn">
+                            <i class="fas fa-plus"></i> Add Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i> Searching...
+        </div>
+
+        <!-- Search Results -->
+        <section id="searchResults" class="search-results" style="display: none;">
+            <h2><i class="fas fa-list"></i> Search Results</h2>
+            <div id="resultsContainer" class="results-container">
+                <!-- Results will be populated here -->
+            </div>
+        </section>
+
+        <!-- Active Downloads -->
+        <section class="downloads-section">
+            <div class="section-header">
+                <h2><i class="fas fa-download"></i> Active Downloads</h2>
+                <button id="refreshBtn" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div id="downloadsContainer" class="downloads-container">
+                <div class="no-downloads">
+                    <i class="fas fa-inbox"></i>
+                    <p>No active downloads</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
