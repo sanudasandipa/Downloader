@@ -543,7 +543,10 @@ class TorrentDownloader {
                 </div>
                 <div class="file-actions">
                     ${isFolder ? 
-                        `<button class="file-action-btn info" onclick="app.showFileInfo('${file.path}')" title="Info">
+                        `<button class="file-action-btn download" onclick="app.downloadFile('${file.path}')" title="Download as ZIP">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="file-action-btn info" onclick="app.showFileInfo('${file.path}')" title="Info">
                             <i class="fas fa-info-circle"></i>
                         </button>` :
                         `<button class="file-action-btn download" onclick="app.downloadFile('${file.path}')" title="Download">
@@ -700,6 +703,76 @@ class TorrentDownloader {
 
     async downloadFile(filePath) {
         try {
+            // First check if it's a folder by getting file info
+            const fileInfoResponse = await fetch(`/api/files/info?path=${encodeURIComponent(filePath)}`);
+            const fileInfoData = await fileInfoResponse.json();
+            
+            if (fileInfoData.success) {
+                const isFolder = fileInfoData.info.type === 'folder';
+                const fileName = fileInfoData.info.name;
+                
+                if (isFolder) {
+                    // Show confirmation for folder download
+                    this.showFolderDownloadConfirmation(filePath, fileName, fileInfoData.info);
+                } else {
+                    // Direct download for files
+                    this.performDownload(filePath);
+                }
+            } else {
+                // Fallback: attempt direct download
+                this.performDownload(filePath);
+            }
+        } catch (error) {
+            this.showToast('Error downloading file: ' + error.message, 'error');
+        }
+    }
+
+    showFolderDownloadConfirmation(folderPath, folderName, folderInfo) {
+        const modal = document.getElementById('fileModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const modalConfirm = document.getElementById('modalConfirm');
+
+        modalTitle.textContent = 'Download Folder as ZIP';
+        modalContent.innerHTML = `
+            <div class="folder-download-info">
+                <p>Are you sure you want to download the folder <strong>"${this.escapeHtml(folderName)}"</strong> as a ZIP file?</p>
+                <div class="folder-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-folder"></i>
+                        <span>Size: ${folderInfo.size_formatted}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-file"></i>
+                        <span>Files: ${folderInfo.files || 0}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-folder"></i>
+                        <span>Folders: ${folderInfo.folders || 0}</span>
+                    </div>
+                </div>
+                <p class="download-note">
+                    <i class="fas fa-info-circle"></i>
+                    The folder will be compressed into a ZIP file for download. This may take some time for large folders.
+                </p>
+            </div>
+        `;
+
+        modalConfirm.textContent = 'Download ZIP';
+        modalConfirm.onclick = () => {
+            this.closeModal();
+            this.performDownload(folderPath, true);
+        };
+
+        modal.style.display = 'flex';
+    }
+
+    performDownload(filePath, isFolder = false) {
+        try {
+            if (isFolder) {
+                this.showToast('Creating ZIP file... This may take a moment for large folders.', 'info');
+            }
+            
             const url = `/api/files/download?path=${encodeURIComponent(filePath)}`;
             const link = document.createElement('a');
             link.href = url;
@@ -708,9 +781,13 @@ class TorrentDownloader {
             link.click();
             document.body.removeChild(link);
             
-            this.showToast('Download started', 'success');
+            if (isFolder) {
+                this.showToast('ZIP download started', 'success');
+            } else {
+                this.showToast('Download started', 'success');
+            }
         } catch (error) {
-            this.showToast('Error downloading file: ' + error.message, 'error');
+            this.showToast('Error downloading: ' + error.message, 'error');
         }
     }
 

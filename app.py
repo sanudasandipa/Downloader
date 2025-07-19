@@ -4,10 +4,12 @@ import json
 import threading
 import shutil
 import psutil
+import zipfile
+import tempfile
 from urllib.parse import quote
 import libtorrent as lt
 import requests
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify, render_template, send_from_directory, send_file
 from flask_cors import CORS
 from search_engine import TorrentSearchEngine
 
@@ -17,6 +19,8 @@ CORS(app)
 # Configuration
 DOWNLOAD_PATH = os.path.join(os.getcwd(), 'downloads')
 TORRENT_PATH = os.path.join(os.getcwd(), 'torrents')
+PUBLIC_URL = os.getenv('PUBLIC_URL', 'http://localhost:5000')
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
 
 # Ensure directories exist
 os.makedirs(DOWNLOAD_PATH, exist_ok=True)
@@ -382,16 +386,48 @@ def api_download_file():
         if not os.path.abspath(full_path).startswith(os.path.abspath(DOWNLOAD_PATH)):
             return jsonify({'error': 'Access denied'}), 403
             
-        if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        if not os.path.exists(full_path):
             return jsonify({'error': 'File not found'}), 404
             
-        directory = os.path.dirname(full_path)
-        filename = os.path.basename(full_path)
-        
-        return send_from_directory(directory, filename, as_attachment=True)
+        if os.path.isfile(full_path):
+            # Download single file
+            directory = os.path.dirname(full_path)
+            filename = os.path.basename(full_path)
+            return send_from_directory(directory, filename, as_attachment=True)
+        else:
+            # Download folder as ZIP
+            return download_folder_as_zip(full_path, file_path)
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+def download_folder_as_zip(folder_path, relative_path):
+    """Create and send a ZIP file of the folder"""
+    try:
+        folder_name = os.path.basename(folder_path) or 'downloads'
+        zip_filename = f"{folder_name}.zip"
+        
+        # Create a temporary ZIP file
+        temp_dir = tempfile.mkdtemp()
+        zip_path = os.path.join(temp_dir, zip_filename)
+        
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(folder_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    # Calculate the relative path for the file inside the ZIP
+                    arc_name = os.path.relpath(file_path, folder_path)
+                    zipf.write(file_path, arc_name)
+        
+        return send_file(
+            zip_path,
+            as_attachment=True,
+            download_name=zip_filename,
+            mimetype='application/zip'
+        )
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to create ZIP: {str(e)}'}), 500
 
 @app.route('/api/files/delete', methods=['DELETE'])
 def api_delete_file():
@@ -443,7 +479,9 @@ def api_share_file():
             
         # Generate shareable link (encode the path)
         encoded_path = quote(file_path)
-        share_url = f"{request.host_url}api/files/download?path={encoded_path}"
+        # Use configured public URL instead of request.host_url for Oracle server
+        base_url = PUBLIC_URL.rstrip('/')
+        share_url = f"{base_url}/api/files/download?path={encoded_path}"
         
         return jsonify({
             'success': True,
@@ -558,7 +596,7 @@ if __name__ == '__main__':
     # Get configuration from environment variables
     debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
     host = os.getenv('FLASK_HOST', '0.0.0.0')
-    port = int(os.getenv('FLASK_PORT', 5000))
+    port = int(os.getenv('FLASK_PORT', 80))  # Default to port 80 for Oracle server
     
     print(f"Server starting on {host}:{port}")
     print(f"Debug mode: {debug_mode}")

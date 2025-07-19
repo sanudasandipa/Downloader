@@ -1134,6 +1134,59 @@ body {
     background: #545b62;
 }
 
+/* Folder Download Confirmation Styles */
+.folder-download-info {
+    text-align: center;
+}
+
+.folder-download-info p {
+    margin-bottom: 1rem;
+    color: #495057;
+}
+
+.folder-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.folder-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.folder-stats .stat-item i {
+    color: #007bff;
+    width: 16px;
+    text-align: center;
+}
+
+.download-note {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 6px;
+    color: #1565c0;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.download-note i {
+    color: #1976d2;
+    flex-shrink: 0;
+}
+
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 2fr;

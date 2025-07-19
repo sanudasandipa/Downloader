@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  torrent-downloader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: torrent-downloader-oracle
+    restart: unless-stopped
+    ports:
+      - "80:80"              # Map host port 80 to container port 80
+      - "6881-6891:6881-6891/tcp"  # Torrent TCP ports
+      - "6881-6891:6881-6891/udp"  # Torrent UDP ports
+    volumes:
+      - ./downloads:/app/downloads
+      - ./torrents:/app/torrents
+      - ./data:/app/data
+      - ./.env.oracle:/app/.env  # Use Oracle-specific environment
+    environment:
+      - FLASK_ENV=production
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=80
+      - PUBLIC_URL=http://129.159.227.52
+      - BASE_URL=http://129.159.227.52
+      - PYTHONUNBUFFERED=1
+    networks:
+      - torrent-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  torrent-network:
+    driver: bridge
