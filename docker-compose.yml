@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  torrent-downloader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: torrent-downloader
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "6881-6891:6881-6891"
+    volumes:
+      - ./downloads:/app/downloads
+      - ./torrents:/app/torrents
+      - ./data:/app/data
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    networks:
+      - torrent-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  torrent-network:
+    driver: bridge
+
+volumes:
+  downloads:
+  torrents:
+  data:

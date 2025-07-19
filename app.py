@@ -554,4 +554,13 @@ if __name__ == '__main__':
     print("Starting Torrent Downloader Server...")
     print(f"Download path: {DOWNLOAD_PATH}")
     print(f"Torrent path: {TORRENT_PATH}")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    # Get configuration from environment variables
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    host = os.getenv('FLASK_HOST', '0.0.0.0')
+    port = int(os.getenv('FLASK_PORT', 5000))
+    
+    print(f"Server starting on {host}:{port}")
+    print(f"Debug mode: {debug_mode}")
+    
+    app.run(debug=debug_mode, host=host, port=port)
