@@ -56,6 +56,152 @@
             </div>
         </section>
 
+        <!-- Storage Information -->
+        <section class="storage-section">
+            <div class="section-header">
+                <h2><i class="fas fa-hdd"></i> Storage & System Information</h2>
+                <button id="refreshStorageBtn" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="storage-grid">
+                <!-- Disk Storage -->
+                <div class="storage-card">
+                    <div class="storage-header">
+                        <h3><i class="fas fa-hard-drive"></i> Disk Storage</h3>
+                    </div>
+                    <div class="storage-content">
+                        <div class="storage-chart">
+                            <div class="chart-container">
+                                <div class="circular-progress" id="diskProgress">
+                                    <div class="progress-value" id="diskPercentage">0%</div>
+                                </div>
+                            </div>
+                            <div class="chart-info">
+                                <div class="info-item">
+                                    <span class="label">Total:</span>
+                                    <span class="value" id="diskTotal">0 B</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Used:</span>
+                                    <span class="value" id="diskUsed">0 B</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Free:</span>
+                                    <span class="value" id="diskFree">0 B</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Downloads Folder -->
+                <div class="storage-card">
+                    <div class="storage-header">
+                        <h3><i class="fas fa-download"></i> Downloads</h3>
+                    </div>
+                    <div class="storage-content">
+                        <div class="storage-stats">
+                            <div class="stat-large">
+                                <span class="stat-value" id="downloadsSize">0 B</span>
+                                <span class="stat-label">Folder Size</span>
+                            </div>
+                            <div class="storage-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-folder"></i>
+                                    <span id="downloadsPath">/downloads</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-file"></i>
+                                    <span id="downloadCount">0 files</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Resources -->
+                <div class="storage-card">
+                    <div class="storage-header">
+                        <h3><i class="fas fa-microchip"></i> System</h3>
+                    </div>
+                    <div class="storage-content">
+                        <div class="system-resources">
+                            <div class="resource-item">
+                                <div class="resource-header">
+                                    <span class="resource-label">
+                                        <i class="fas fa-memory"></i> Memory
+                                    </span>
+                                    <span class="resource-value" id="memoryPercentage">0%</span>
+                                </div>
+                                <div class="progress-bar small">
+                                    <div class="progress-fill" id="memoryProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="resource-details">
+                                    <span id="memoryUsed">0 B</span> / <span id="memoryTotal">0 B</span>
+                                </div>
+                            </div>
+                            
+                            <div class="resource-item">
+                                <div class="resource-header">
+                                    <span class="resource-label">
+                                        <i class="fas fa-tachometer-alt"></i> CPU
+                                    </span>
+                                    <span class="resource-value" id="cpuPercentage">0%</span>
+                                </div>
+                                <div class="progress-bar small">
+                                    <div class="progress-fill" id="cpuProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Torrent Statistics -->
+                <div class="storage-card">
+                    <div class="storage-header">
+                        <h3><i class="fas fa-exchange-alt"></i> Network Activity</h3>
+                    </div>
+                    <div class="storage-content">
+                        <div class="torrent-stats">
+                            <div class="stat-row">
+                                <div class="stat-item-inline">
+                                    <i class="fas fa-download"></i>
+                                    <span class="stat-label">Download Speed</span>
+                                    <span class="stat-value" id="totalDownloadSpeed">0 B/s</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-row">
+                                <div class="stat-item-inline">
+                                    <i class="fas fa-upload"></i>
+                                    <span class="stat-label">Upload Speed</span>
+                                    <span class="stat-value" id="totalUploadSpeed">0 B/s</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-row">
+                                <div class="stat-item-inline">
+                                    <i class="fas fa-users"></i>
+                                    <span class="stat-label">Connected Peers</span>
+                                    <span class="stat-value" id="totalPeers">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-row">
+                                <div class="stat-item-inline">
+                                    <i class="fas fa-play"></i>
+                                    <span class="stat-label">Active Downloads</span>
+                                    <span class="stat-value" id="activeDownloads">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Active Downloads -->
         <section class="downloads-section">
             <div class="section-header">
@@ -71,6 +217,92 @@
                 </div>
             </div>
         </section>
+
+        <!-- File Manager -->
+        <section class="file-manager-section">
+            <div class="section-header">
+                <h2><i class="fas fa-folder-open"></i> File Manager</h2>
+                <div class="file-manager-controls">
+                    <button id="refreshFilesBtn" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button id="homeBtn" class="home-btn">
+                        <i class="fas fa-home"></i> Home
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Breadcrumb Navigation -->
+            <div class="breadcrumb-nav">
+                <nav id="breadcrumb" class="breadcrumb">
+                    <span class="breadcrumb-item active">
+                        <i class="fas fa-home"></i> Downloads
+                    </span>
+                </nav>
+            </div>
+            
+            <!-- File Browser -->
+            <div class="file-browser">
+                <div class="file-browser-header">
+                    <div class="view-toggle">
+                        <button id="listViewBtn" class="view-btn active">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button id="gridViewBtn" class="view-btn">
+                            <i class="fas fa-th"></i>
+                        </button>
+                    </div>
+                    <div class="file-info">
+                        <span id="fileCount">0 items</span>
+                    </div>
+                </div>
+                
+                <div id="fileList" class="file-list">
+                    <div class="loading-files">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading files...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Actions Modal -->
+        <div id="fileModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">File Actions</h3>
+                    <button class="modal-close" id="closeModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent">
+                        <!-- Modal content will be populated here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="modalCancel" class="btn-secondary">Cancel</button>
+                    <button id="modalConfirm" class="btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Info Modal -->
+        <div id="fileInfoModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>File Information</h3>
+                    <button class="modal-close" id="closeInfoModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="fileInfoContent">
+                        <!-- File info will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Toast Notifications -->
         <div id="toastContainer" class="toast-container"></div>
